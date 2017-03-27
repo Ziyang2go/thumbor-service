@@ -1,0 +1,54 @@
+version: '2'
+services:
+  thumbor:
+    image: apsl/thumbor:latest
+    volumes:
+      - logs:/logs
+      - data:/data
+    environment:
+      - ALLOW_UNSAFE_URL=True
+      - RESULT_STORAGE_STORES_UNSAFE=True
+      - DETECTORS=['thumbor.detectors.queued_detector.queued_complete_detector','thumbor.detectors.face_detector', 'thumbor.detectors.feature_detector']
+      - SECURITY_KEY=helloworld
+      - AWS_ACCESS_KEY_ID=AKIAI6Y627D4C5LMXEUQ
+      - AWS_SECRET_ACCESS_KEY=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
+      - S3_USE_SIGV4=true
+      - TC_AWS_REGION=ca-central-1
+      - STORAGE=thumbor.storages.no_storage
+      - RESULT_STORAGE=tc_aws.result_storages.s3_storage
+      - RESULT_STORAGE_BUCKET=montreal-test
+      - STORAGE_EXPIRATION_SECONDS=None
+      - RESULT_STORAGE_EXPIRATION_SECONDS=None
+      - TC_AWS_RESULT_STORAGE_BUCKET=montreal-test
+      - TC_AWS_RESULT_STORAGE_ROOT_PATH=upload/
+    links:
+      - redis:redis
+    restart: always
+    networks:
+      - frontend
+  nginx:
+    image: apsl/thumbor-nginx:latest
+    links:
+      - thumbor:thumbor
+    environment: 
+      - THUMBOR_ALLOW_CORS=True
+    volumes_from:
+      - thumbor
+    ports:
+      - "80:80" # nginx cache port (with failover to thumbor)
+    hostname: nginx
+    networks:
+      - frontend
+  redis:
+    image: redis:latest
+    restart: always
+    networks:
+      - frontend
+volumes:
+  data:
+    driver: local
+  logs:
+    driver: local
+networks:
+  frontend:
+    driver: bridge
