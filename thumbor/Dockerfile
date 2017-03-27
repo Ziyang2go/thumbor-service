@@ -1,5 +1,7 @@
 FROM python:2
 
+MAINTAINER Edu Herraiz <ghark@gmail.com>
+
 VOLUME /data
 
 # Things required for a python/pip environment
@@ -27,7 +29,7 @@ RUN pip install --trusted-host None --no-cache-dir --use-wheel \
 
 COPY conf/thumbor.conf.tpl /usr/src/app/thumbor.conf.tpl
 
-RUN \ 
+RUN \
     ln /usr/lib/python2.7/dist-packages/cv2.x86_64-linux-gnu.so /usr/local/lib/python2.7/cv2.so && \
     ln /usr/lib/python2.7/dist-packages/cv.py /usr/local/lib/python2.7/cv.py
 
