@@ -15,12 +15,13 @@ services:
       - S3_USE_SIGV4=true
       - TC_AWS_REGION=ca-central-1
       - STORAGE=thumbor.storages.no_storage
-      - RESULT_STORAGE=tc_aws.result_storages.s3_storage
-      - RESULT_STORAGE_BUCKET=montreal-test
-      - STORAGE_EXPIRATION_SECONDS=None
+      - RESULT_STORAGE=tc_aws.result_storages.file_storage
+      #- RESULT_STORAGE_BUCKET=montreal-test
+      #- STORAGE_EXPIRATION_SECONDS=None
       - RESULT_STORAGE_EXPIRATION_SECONDS=None
-      - TC_AWS_RESULT_STORAGE_BUCKET=montreal-test
-      - TC_AWS_RESULT_STORAGE_ROOT_PATH=upload/
+      #- TC_AWS_RESULT_STORAGE_BUCKET=montreal-test
+      #- TC_AWS_RESULT_STORAGE_ROOT_PATH=upload/
+      - LOADER=thumbor.loaders.file_loader_http_fallback
     links:
       - redis:redis
     restart: always
@@ -30,7 +31,7 @@ services:
     image: apsl/thumbor-nginx:latest
     links:
       - thumbor:thumbor
-    environment: 
+    environment:
       - THUMBOR_ALLOW_CORS=True
     volumes_from:
       - thumbor
