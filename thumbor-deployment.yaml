@@ -30,19 +30,21 @@ spec:
           requests:
             cpu: 10m
             memory: 10Mi
-        env:       
+        env:
         - name: LOG_LEVEL
           value: "DEBUG"
         - name: ALLOW_UNSAFE_URL
           value: "True"
-        - name: SECURITY_KEY
-          value: "claraiothumbor"
+        # - name: SECURITY_KEY
+        #   value: "claraiothumbor"
         - name: DETECTORS
           value: "['thumbor.detectors.queued_detector.queued_complete_detector',]"
         - name: RESULT_STORAGE
           value: "thumbor.result_storages.file_storage"
         - name: STORAGE
           value: "thumbor.storages.no_storage"
+        - name: RESULT_STORAGE_STORES_UNSAFE
+          value: "True"
         #- name: THUMBOR_NUM_PROCESSES
           #value: "8"
         - name: THUMBOR_PORT
@@ -53,34 +55,13 @@ spec:
           value: "None"
         - name: RESPECT_ORIENTATION
           value: "True"
-        volumeMounts:
-        - name: thumbor-prod-data
-          mountPath: /data
-          readOnly: False
-        imagePullPolicy: Always
-      - name: thumbor-prod-nginx
-        image: apsl/thumbor-nginx:latest
-        resources:
-          limits:
-            cpu: 100m
-            memory: 50Mi
-          requests:
-            cpu: 10m
-            memory: 5Mi
-        env:
-        - name: THUMBOR_DEFAULT_HOST
-          value: 127.0.0.1
-        - name: THUMBOR_DEFAULT_PORT
-          value: "8001"
-        - name: THUMBOR_ALLOW_CORS
-          value: "True"
         ports:
-        - containerPort: 80
+        - containerPort: 8001
           name: thumbor-prod
         volumeMounts:
         - name: thumbor-prod-data
           mountPath: /data
-          readOnly: True
+          readOnly: False
         imagePullPolicy: Always
       volumes:
       - name: thumbor-prod-data
