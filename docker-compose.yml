@@ -22,26 +22,8 @@ services:
       #- TC_AWS_RESULT_STORAGE_BUCKET=montreal-test
       #- TC_AWS_RESULT_STORAGE_ROOT_PATH=upload/
       - LOADER=thumbor.loaders.http_loader
-    links:
-      - redis:redis
-    restart: always
-    networks:
-      - frontend
-  nginx:
-    image: apsl/thumbor-nginx:latest
-    links:
-      - thumbor:thumbor
-    environment:
-      - THUMBOR_ALLOW_CORS=True
-    volumes_from:
-      - thumbor
     ports:
-      - "80:80" # nginx cache port (with failover to thumbor)
-    hostname: nginx
-    networks:
-      - frontend
-  redis:
-    image: redis:latest
+     - "8000:8000"
     restart: always
     networks:
       - frontend
