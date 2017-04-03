@@ -38,7 +38,8 @@ spec:
         # - name: SECURITY_KEY
         #   value: "claraiothumbor"
         - name: DETECTORS
-          value: "['thumbor.detectors.queued_detector.queued_complete_detector',]"
+          value: "['thumbor.detectors.queued_detector.queued_complete_detector', 'thumbor.detectors.face_detector',
+    'thumbor.detectors.feature_detector']"
         - name: RESULT_STORAGE
           value: "thumbor.result_storages.file_storage"
         - name: STORAGE
