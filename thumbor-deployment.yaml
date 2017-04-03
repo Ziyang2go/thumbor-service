@@ -1,0 +1,90 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: thumbor-prod
+  labels:
+    app: thumbor-prod
+    version: "latest"
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: thumbor-prod
+  minReadySeconds: 10
+  template:
+    metadata:
+      name: thumbor-prod
+      labels:
+        app: thumbor-prod
+        version: "latest"
+        role: service
+        group: yourgroup
+    spec:
+      containers:
+      - name: thumbor-prod
+        image: apsl/thumbor:latest
+        resources:
+          limits:
+            cpu: 600m
+            memory: 1200Mi
+          requests:
+            cpu: 10m
+            memory: 10Mi
+        env:       
+        - name: LOG_LEVEL
+          value: "DEBUG"
+        - name: ALLOW_UNSAFE_URL
+          value: "True"
+        - name: SECURITY_KEY
+          value: "claraiothumbor"
+        - name: DETECTORS
+          value: "['thumbor.detectors.queued_detector.queued_complete_detector',]"
+        - name: RESULT_STORAGE
+          value: "thumbor.result_storages.file_storage"
+        - name: STORAGE
+          value: "thumbor.storages.no_storage"
+        #- name: THUMBOR_NUM_PROCESSES
+          #value: "8"
+        - name: THUMBOR_PORT
+          value: "8001"
+        - name: STORAGE_EXPIRATION_SECONDS
+          value: "None"
+        - name: RESULT_STORAGE_EXPIRATION_SECONDS
+          value: "None"
+        - name: RESPECT_ORIENTATION
+          value: "True"
+        volumeMounts:
+        - name: thumbor-prod-data
+          mountPath: /data
+          readOnly: False
+        imagePullPolicy: Always
+      - name: thumbor-prod-nginx
+        image: apsl/thumbor-nginx:latest
+        resources:
+          limits:
+            cpu: 100m
+            memory: 50Mi
+          requests:
+            cpu: 10m
+            memory: 5Mi
+        env:
+        - name: THUMBOR_DEFAULT_HOST
+          value: 127.0.0.1
+        - name: THUMBOR_DEFAULT_PORT
+          value: "8001"
+        - name: THUMBOR_ALLOW_CORS
+          value: "True"
+        ports:
+        - containerPort: 80
+          name: thumbor-prod
+        volumeMounts:
+        - name: thumbor-prod-data
+          mountPath: /data
+          readOnly: True
+        imagePullPolicy: Always
+      volumes:
+      - name: thumbor-prod-data
+        hostPath:
+          path: /var/thumbor-production
+      restartPolicy: Always
+      dnsPolicy: ClusterFirst
