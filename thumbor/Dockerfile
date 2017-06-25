@@ -27,6 +27,12 @@ RUN pip install --trusted-host None --no-cache-dir --use-wheel \
    --trusted-host ${DOCKERHOST} \
    -r /usr/src/app/requirements.txt
 
+#install thumbor-plugins after thumbor installed
+RUN pip install thumbor-plugins && apt-get install pngcrush
+
+#move pngcrush to PNGCRUSH_PATH
+RUN mv /usr/bin/pngcrush /usr/local/bin/
+
 COPY conf/thumbor.conf.tpl /usr/src/app/thumbor.conf.tpl
 
 RUN \
